@@ -14,6 +14,9 @@
   - [设备软件设计](#设备软件设计)
     - [软件框图](#软件框图)
   - [服务器搭建](#服务器搭建)
+    - [整体框图](#整体框图)
+    - [通信协议选择](#通信协议选择)
+    - [服务器启动](#服务器启动)
   - [前端网页设计](#前端网页设计)
   - [代码分析](#代码分析)
   - [维护者](#维护者)
@@ -90,10 +93,51 @@
 
 
 ## 服务器搭建
-netstat -tunpl |grep 80
-sudo python3 myApp.py runserver -h 0.0.0.0 -p 80
-sudo nohup python3 myApp.py runserver -h 0.0.0.0 -p 80 >out.log 2>&1 &
+
+### 整体框图
+![](screenshots/整体框图.png)
+
+### 通信协议选择
+
+服务器和设备间的通信通过mqtt协议实现,即发布订阅模式,设备发布传感器检测到的环境信息,接收服务器命令,服务器则恰好相反。
+
+服务器和网页的通信基于传统的http协议。
+
+### 服务器启动
+python要求：python3.6及以上,linux环境
+
+python库要求:
++ Flask(1.1.2)
++ Flask-Bootstrap(3.3.7.1)
++ Flask-Migrate(2.7.0)
++ FLask-Mqtt(1.1.1)
++ Flask-Script(2.0.6)
++ Flask-SQLAlchemy(2.5.1)
++ Jinja2(2.11.3)
++ paho-mqtt(1.5.1)
++ requests(2.18.4)
++ SQLAlchemy(1.4.12)
++ Werkzeug (1.0.1)
++ uWSGI (2.0.19.1)
+
+通过`git clone https://github.com/WangJun2000/intelligentFlowerpot.git`获取代码库,然后进入intelligentFlowerpot文件夹。
+
+终端启动:`sudo python3 myApp.py runserver -h 0.0.0.0 -p 80`
+
+后台启动:`sudo nohup python3 myApp.py runserver -h 0.0.0.0 -p 80 >out.log 2>&1 &`日志在out.log中查看
+
+后台启动后杀死程序:在root下用`netstat -tunpl |grep 80`查找占用80端口的进程,执行`kill+查到的进程号`杀死进程。
+
+
 ## 前端网页设计
+![](screenshots/自动模式.png)
+如图所示,这是自动模式的界面,可以通过点击四叶草的不同叶子实现查看不同信息的功能，每十秒进行一次更新
+![](screenshots/手动模式.png)
+如图所示,这是手动模式的界面,可以手动设置浇水量和LED光强
+![](screenshots/历史信息.png)
+如图所示,这是历史信息的界面,可以查看不同时间段内温度、光强以及土壤湿度的变化
+![](screenshots/操作历史.png)
+如图所示,这是操作历史的界面，可以查看自动和人工操作的历史
 
 ## 代码分析
 ```
