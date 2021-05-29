@@ -1,0 +1,67 @@
+{%extends 'base.html'%}
+
+{% block title %}
+  {{name}}的首页
+{% endblock %}
+
+{% block styles %}
+    {{super()}}
+    <style>
+        #tips{
+          color:rgba(201, 131, 25, 0.493);
+          text-align:center;
+          margin-top: 250px;
+        }
+    </style>
+{% endblock %}
+{% block navbar %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/" id="webName">花盆网</a>
+      </div>
+  
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">首页 <span class="sr-only">(current)</span></a></li>
+          <li><a href="/about">关于我</a></li>
+          {% if currentFlowerpot %} 
+            <li><a href="#">当前花盆:{{currentFlowerpot}}</a></li>
+          {% endif %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">选择花盆 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              {% for flowerpot in flowerpots %}
+                <li ><a href="" class="flowerpot">{{flowerpot.flowerpotName}}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">历史记录 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+            </ul>
+          </li>
+        </ul>
+        <form class="navbar-form navbar-left">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-default">搜索花盆</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" onclick="">{{ name}},您好</a></li>
+          <li><a href="/login">登录</a></li>
+          <li><a href="/signup">注册</a></li>
+          <li><a href="/logout?name='{{ name }}'" id ="logout">注销</a></li>
+          <li><a href="/bindFlowerpot">绑定花盆</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+{% endblock %}
+
+{% block newcontent %}
+  <h3 id='tips'>您还没有绑定花盆,请点击右上角的绑定花盆按钮绑定一个新花盆</h3>
+{% endblock %}

@@ -1,0 +1,566 @@
+{%extends 'base.html'%}
+
+{% block title %}
+  {{name}}的花盆{{currentFlowerpot.flowerpotName}}
+{% endblock %}
+
+{% block styles %}
+  {{super()}}
+  <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
+  <style>
+    #msg1{
+      text-align: center;
+      font-size:16px;
+      color:#eb632e;
+    }
+    #msg2{
+      text-align: center;
+      font-size:16px;
+      color:#eb632e;
+    }
+    #switch{
+      margin-left: 1%;
+    }
+    #table{
+      
+      margin-left:20%;
+      margin-top:50px;
+      height:300px;
+      width: 900px;
+    }
+    #temperature{
+      font-size: 50px;
+    }
+    #soilHumidity{
+      font-size: 50px;
+    }
+    #lightIntensity{
+      text-align: center;
+      font-size:50px;
+    }
+    #testTime{
+      margin-top: 10px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .active{
+      text-align: center;
+      font-size:16px;
+      font-weight: bold;
+      font-family: 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      width:450px;
+      vertical-align: middle!important;
+    }
+    .info{
+      text-align:left;
+      font-size: 18px;
+      font-weight: bold;
+      vertical-align: middle!important;
+    }
+    .success{
+      text-align: center;
+      vertical-align: middle!important;
+    }
+    #label{
+      margin-left:40%;
+    }
+    #desforWaterbutton{
+      color:rgba(225, 89, 230, 0.76);
+      text-align: center;
+      font-size:20px;
+      font-weight:bold;
+      font-family:Cursive,Fantasy ;
+      margin-top: 50px;
+    }
+    #LED{
+      color:rgba(225, 89, 230, 0.76);
+      text-align: center;
+      font-size:20px;
+      font-weight:bold;
+      font-family:Cursive,Fantasy ;
+      margin-top: 50px;
+    }
+    #waterbutton{
+      text-align:center;
+      margin-top: 10px;
+    }
+    
+    #demo { 
+      width: 600px; height: 70px; margin: 30px auto; 
+      display: flex; align-items: center; 
+    }
+    
+    #demo .progress { 
+        width: 100%; height: 10px; border-radius: 3px; 
+        background: #F1F5FD; 
+    }
+    
+    #demo .progress .progress-bar { 
+        width: 40%; height: 100%; border-radius: 3px; 
+        background: #cd80e9; 
+    }
+    
+    #demo .progress .progress-bar .progress-thumb { 
+        width: 14px; height: 14px; border-radius: 50%; 
+        background: #FFFFFF; box-shadow: 0 0 15px 5px #cd80e9; 
+        float: right; 
+        position: relative; left: 7px; top: -3px; 
+    }
+    #labelforbar{
+      margin-bottom: 19px;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+    #pforsetLED{
+      text-align: center;
+    }
+  </style>
+{% endblock %}
+
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/" id="webName">花盆网</a>
+      </div>
+  
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="success"><a href="/">首页 <span class="sr-only">(current)</span></a></li>
+          <li><a href="/about">关于我</a></li>
+          {% if currentFlowerpot %} 
+            <li><a href="#" id="currentFlowerpotName">当前花盆:{{currentFlowerpot}}</a></li>
+          {% endif %}
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">选择花盆 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              {% for flowerpot in flowerpots %}
+                <li ><a href="#" class="flowerpot">{{flowerpot.flowerpotName}}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">历史信息 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" id="10minutes">最近十分钟</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" id="1hour">最近一小时</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" id="1day">最近二十四小时</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" id="all">所有记录</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">操作历史 <span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#" id="c10minutes">最近十分钟</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" id="c1hour">最近一小时</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" id="c1day">最近二十四小时</a></li>
+              <li role="separator" class="divider"></li>
+              <li><a href="#" id="call">所有记录</a></li>
+            </ul>
+          </li>
+        </ul>
+        <form class="navbar-form navbar-left">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-default">搜索花盆</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#" onclick="">{{ name}},您好</a></li>
+          <li><a href="/login">登录</a></li>
+          <li><a href="/signup">注册</a></li>
+          <li><a href="/logout?name={{ name }}" id ="logout">注销</a></li>
+          <li><a href="/bindFlowerpot">绑定花盆</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+{% endblock %}
+
+
+{% block newcontent %}
+{% if currentFlowerpot.isAuto == True %}
+  <div class="row">
+    <div class="form-inline">
+      <label for="switch" id="label">当前模式:</label>
+      <button type="button" class="btn btn-priamry" id="switch"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>自动 <span class="label label-default">点此切换</span></button>
+    </div>
+  </div>
+
+  <p class="text-primary" id="testTime">测试时间(每十秒刷新一次):{{latestStatus.testTime}}</p>
+
+  <div class="box">
+    <ul>
+      <li>
+        <div class="box_ti box_time"> <i>北京 海淀</i>
+          <p id="temperature">{{latestStatus.temperature}}</p>
+          <p>℃</p>
+          <p></p>
+          <p></p>
+          <p>温度太高花会死掉哦</p>
+          <p></p>
+        </div>
+        <div class="box_ti box_time2"> <i>北京 海淀</i>
+          <h4 id="soilHumidity">{{latestStatus.soilHumidity|int}}%</h4>
+          <strong class="strong1">如果土壤湿度偏低,</strong> <strong>会自动浇水。</strong> </div>
+        <div class="box_ti box_time3"> <i>北京 海淀</i>
+          <h4 id ="lightIntensity">{{latestStatus.lightIntensity|int}}cd</h4>
+        </div>
+      </li>
+      <li> </li>
+      <li class="active_0"> <span class="active_span_0"></span>
+        <h3>土壤湿度</h3>
+      </li>
+      <li class="active_first_0"> <span class="active_first_span"></span>
+        <h3>光强</h3>
+      </li>
+    </ul>
+  </div>
+{#  <table class="table table-hover" id ="table">
+
+      <!-- On cells (`td` or `th`) -->
+      <tr>
+        <th class="info" >环境状况(每十秒更新一次)</th>
+        <th class="info" colspan="2" text-align="center"></th>
+      </tr>
+      <tr>
+        <td class="active">测量时间</td>
+        <td class="success" id="testTime">{{latestStatus.testTime}}</td>
+      </tr>
+      <tr>
+        <td class="active">温度/&#8451;</td>
+        <td class="success" id="temperature">{{latestStatus.temperature}}</td>
+      </tr>
+      <!-- On cells (`td` or `th`) -->
+      <tr>
+        <td class="active">土壤湿度/%</td>
+        <td class="success" id="soilHumidity">{{latestStatus.soilHumidity}}</td>
+      </tr>
+      <!-- On cells (`td` or `th`) -->
+      <tr>
+        <td class="active">光强/cd</td>
+        <td class="success" id="lightIntensity">{{latestStatus.lightIntensity}}</td>
+      </tr>
+    </table>#}
+
+
+  {% else %}
+    <div class="row">
+      <div class="form-inline">
+        <label for="switch" id="label">当前状态:</label>
+        <button type="button" class="btn btn-priamry" id="switch"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span>人工 <span class="label label-default">点此切换</span></button>
+      </div>
+    </div>
+    <p id="desforWaterbutton">浇水量(档):</p>
+    <p id="waterbutton">
+      <!-- Standard button -->
+      <button type="button" class="btn btn-default" id="water1">（极少）一档</button>
+
+      <!-- Provides extra visual weight and identifies the primary action in a set of buttons -->
+      <button type="button" class="btn btn-primary" id="water2">（少量）二档</button>
+
+      <!-- Indicates a successful or positive action -->
+      <button type="button" class="btn btn-success" id="water3">（正常）三档</button>
+
+      <!-- Contextual button for informational alert messages -->
+      <button type="button" class="btn btn-info" id="water4">（较多）四档</button>
+
+      <!-- Indicates caution should be taken with this action -->
+      <button type="button" class="btn btn-warning" id="water5">（很多）五档</button>
+
+    </p>
+    <p id="msg1"></p>
+    <p id="LED">设置LED光强(百分比):40%</p>
+
+    <div id="demo">
+      <div class="progress">
+          <div class="progress-bar">
+              <div class="progress-thumb"></div>
+          </div>
+      </div>
+    </div>
+    <p id="pforsetLED">
+      <button type="button" class="btn btn-success" id="setLED">确认设置光强</button>
+    </p>
+    <p id="msg2"></p>
+  {% endif %}
+
+{% endblock %}
+
+{%block scripts %}
+  {{super()}}
+  <script>
+    //用来切换花盆
+    $('.flowerpot').click(function(){
+      let flowerpotName=$(this).text()
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName
+      //alert(hrefslice+flowerpotName)
+    })
+    //用来获取历史信息
+    $('#10minutes').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/history?time=10"
+    })
+    $('#1hour').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/history?time=60"
+    })
+    $('#1day').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/history?time=1440"
+    })
+    $('#all').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/history?time=all"
+    })
+    //用来获取操作历史
+    $('#c10minutes').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/controlhistory?time=10"
+    })
+    $('#c1hour').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/controlhistory?time=60"
+    })
+    $('#c1day').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/controlhistory?time=1440"
+    })
+    $('#call').click(function(){
+      let flowerpotName="{{currentFlowerpot}}"
+      //alert(flowerpotName)
+      let href=window.location.href
+      let end=href.lastIndexOf('/')
+      let hrefslice=href.slice(0,end+1)
+      window.location.href=hrefslice+flowerpotName+"/controlhistory?time=all"
+    })
+    //更改模式
+    $('#switch').click(function(){
+      //alert('点到我了')
+      $.get("{{url_for('user.change')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}'},function(data){
+
+      })
+      let href=window.location.href
+      setTimeout(function(){
+        window.location.href=href
+        //alert('刷新了')
+      },300)
+    })
+    //定时更新状态
+    function getLatestStatus(){
+      console.log('a');
+      $.get("{{url_for('user.update')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}'},function(data){
+        if(data!=null){
+          $('#testTime').text("测试时间(每十秒刷新一次):"+data.testTime);
+          $('#temperature').text(data.temperature.toFixed(1));
+          $('#soilHumidity').text(data.soilHumidity.toFixed(2)+"%");
+          $('#lightIntensity').text(data.lightIntensity+"cd");
+          console.log(data)
+        }
+      })
+    }
+    ref=setInterval(function(){
+      getLatestStatus();
+    },10000)  
+    //浇水按钮
+    $('#water1').click(function(){
+      $.get("{{url_for('user.peoplewater')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}',watergrade:1},function(data){
+        if(data=="success"){
+          $('#msg1').text("")
+          setTimeout(function(){
+            $('#msg1').text("浇水成功")
+          },300)
+        }
+        else{
+          $('#msg1').text("浇水失败")
+        }
+      })
+    })
+    $('#water2').click(function(){
+      $.get("{{url_for('user.peoplewater')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}',watergrade:2},function(data){
+        if(data=="success"){
+          $('#msg1').text("")
+          setTimeout(function(){
+            $('#msg1').text("浇水成功")
+          },300)
+        }
+        else{
+          $('#msg1').text("浇水失败")
+        }
+      })
+    })
+    $('#water3').click(function(){
+      $.get("{{url_for('user.peoplewater')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}',watergrade:3},function(data){
+        if(data=="success"){
+          $('#msg1').text("")
+          setTimeout(function(){
+            $('#msg1').text("浇水成功")
+          },300)
+        }
+        else{
+          $('#msg1').text("浇水失败")
+        }
+      })
+    })
+    $('#water4').click(function(){
+      $.get("{{url_for('user.peoplewater')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}',watergrade:4},function(data){
+        if(data=="success"){
+          $('#msg1').text("")
+          setTimeout(function(){
+            $('#msg1').text("浇水成功")
+          },300)
+        }
+        else{
+          $('#msg1').text("浇水失败")
+        }
+      })
+    })
+    $('#water5').click(function(){
+      $.get("{{url_for('user.peoplewater')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}',watergrade:5},function(data){
+        if(data=="success"){
+          $('#msg1').text("")
+          setTimeout(function(){
+            $('#msg1').text("浇水成功")
+          },300)
+        }
+        else{
+          $('#msg1').text("浇水失败")
+        }
+      })
+    })
+    //百分比
+    var per=40;
+    //进度条
+    var slider = {
+      use: function(id) {
+          var self = this;
+          self.slider = document.getElementById(id);
+          self.bar = self.slider.querySelector('.progress-bar');
+          self.thumb = self.slider.querySelector('.progress-thumb');
+          self.slider.addEventListener('mousedown', function(e) {
+              if (e.button == 0) { // 判断点击左键
+                  self.mDown = true;
+                  self.beginX = e.offsetX;
+                  self.positionX = e.offsetX;
+                  self.beginClientX = e.clientX;
+                  self.sliderLong = parseInt(self.getStyle(self.slider, 'width'));
+                  per = parseInt(self.positionX / self.sliderLong * 100);
+                  self.bar.style.width = per + '%';
+                  $('#LED').text('设置光强(百分比):'+per+"%")
+              }
+          });
+          document.addEventListener('mousemove', function(e) {
+              if (self.mDown) {
+                  var moveX = e.clientX - self.beginClientX;
+                  self.positionX = (self.beginX + moveX > self.sliderLong) ? self.sliderLong : (self.beginX + moveX < 0) ? 0 : self.beginX + moveX;
+                  var per = parseInt(self.positionX / self.sliderLong * 100);
+                  self.bar.style.width = per + '%';
+              }
+          });
+          document.addEventListener('mouseup', function(e) {
+              if (e.button == 0) { 
+                  self.mDown = false;
+              }
+          });
+      },
+      getStyle: function(obj,styleName){ // 获取元素样式的方法
+          if(obj.currentStyle){
+              return obj.currentStyle[styleName];
+          }else{
+              return getComputedStyle(obj,null)[styleName];
+          }
+      }
+    };
+
+    slider.use('demo');
+
+    $('#setLED').click(function(){
+      $.get("{{url_for('user.peoplesetLED')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}',lightIntensity:per},function(data){
+        if(data=="success"){
+          $('#msg2').text("")
+          setTimeout(function(){
+            $('#msg2').text("设置LED光强成功")
+          },300)
+        }
+        else{
+          $('#msg2').text("设置LED光强失败")
+        }
+      })
+    })
+
+    </script>
+    <script src="https://www.jq22.com/jquery/jquery-1.7.1.js"></script>
+    <script type="text/javascript">
+      $(function(){
+        $(".box").click(function(){
+          if($(this).hasClass("box_rotate")){
+            $(this).removeClass("box_rotate").find("ul").addClass("box_rotate2")
+          }else{
+            $(this).addClass("box_rotate").find("ul").removeClass("box_rotate2");
+          }
+        })
+        
+        $(".box ul li.active_0,.bj_gre_last").live("click",function(){
+          $(this).siblings().find(".box_ti").eq(1).slideDown().siblings().slideUp()
+          .parent("li").siblings().eq(1).addClass("active_1").find("span").addClass("active_1").siblings("h3").html("光强")
+          .parent("li").siblings().eq(2).addClass("last_1").find("span").addClass("last_span1").siblings("h3").html("温度")
+          .parent("li").siblings().eq(2).removeClass("active_0 bj_gre").siblings().removeClass("active_first_0 bj_gre_last")
+        })
+        $(".box ul li.active_1,.active_first_0").live("click",function(){
+          //alert(1)
+          $(this).siblings().find(".box_ti").eq(2).slideDown().siblings().slideUp()
+          .parent("li").siblings().eq(1).addClass("bj_gre").find("span").addClass("bj_gre_span").siblings("h3").html("温度")
+          .parent("li").siblings().eq(2).addClass("bj_gre_last").find("span").addClass("bj_gre_last_s").siblings("h3").html("土壤湿度")
+          .parent("li").siblings().eq(2).removeClass("active_1 active_0").siblings().removeClass("last_1 active_first_0")
+        })
+        $(".box ul li.bj_gre,.last_1").live("click",function(){
+          $(this).siblings().find(".box_ti").eq(0).slideDown().siblings().slideUp()
+          .parent("li").siblings().addClass("active_0").find("span").addClass("active_span_0").siblings("h3").html("土壤湿度")
+          .parent("li").siblings().eq(3).addClass("active_first_0").find("span").addClass("active_first_span").siblings("h3").html("光强")
+          .parent("li").siblings().eq(2).removeClass("bj_gre active_1").siblings().removeClass("bj_gre_last active_0 last_1");
+        })
+      })
+      </script>
+  
+{% endblock %}

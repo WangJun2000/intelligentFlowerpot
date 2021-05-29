@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='images/favicon.ico') }}"
+  />
+  <script>
+
+    //提交花盆名
+    function registerFlowerpot() {
+      //验证数据
+      if (!myForm.flowerpotName.value) {
+        alert("请输入花盆名！");
+        myForm.flowerpotName.focus();
+        return;
+      }
+
+      //提交表单
+      myForm.method = "GET";
+      myForm.action = "history";
+      myForm.submit();
+    }
+
+    //取消
+    function resetForm() {
+      //重置表单
+      document.getElementsByName("myForm")[0].reset();
+    }
+  </script>
+
+  <head>
+    <title>虚构历史页面</title>
+
+    <style>
+      body {
+        background-color: #d0e4fe;
+      }
+
+      h1 {
+        color: orange;
+        text-align: center;
+      }
+
+      p {
+        font-family: "Times New Roman";
+        font-size: 20px;
+      }
+
+      input[type="text"],
+      input[type="password"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-top: 6px;
+        margin-bottom: 16px;
+        resize: vertical;
+      }
+
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+
+      .container {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>虚构历史记录作为测试</h3>
+    <p>{{msg}}</p>
+    <div class="container">
+      <form name="myForm">
+
+        <label for="flowerpotName">花盆名</label>
+        <input
+          type="text"
+          id="flowerpotName"
+          name="flowerpotName"
+          placeholder="请输入花盆名.."
+        />
+        <label for="IP">IP</label>
+        <input
+          type="text"
+          id="IP"
+          name="IP"
+          placeholder="请输入IP.."
+        />
+        <label for="port">port</label>
+        <input
+          type="text"
+          id="port"
+          name="port"
+          placeholder="请输入port.."
+        />
+        <label for="temperature">温度</label>
+        <input
+          type="text"
+          id="temperature"
+          name="temperature"
+          placeholder="请输入温度.."
+        />
+        <label for="soilHumidity">土壤湿度</label>
+        <input
+          type="text"
+          id="soilHumidity"
+          name="soilHumidity"
+          placeholder="请输入土壤湿度名.."
+        />
+
+        <label for="lightIntensity">光强</label>
+        <input
+          type="text"
+          id="lightIntensity"
+          name="lightIntensity"
+          placeholder="请输入光强.."
+        />
+
+
+
+        <td colspan="2" style="text-align: center; padding: 5px">
+          <input type="button" value="导入" onclick="registerFlowerpot()" />
+          <input type="button" value="取消" onclick="resetForm()" />
+        </td>
+      </form>
+    </div>
+  </body>
+</html>

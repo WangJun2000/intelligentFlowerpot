@@ -1,0 +1,82 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}首页{% endblock %}
+
+
+{% block styles %}
+    {{super()}}
+    <link rel="shortcut icon"href="{{ url_for('static', filename='images/favicon.ico') }}"/>
+    <style>
+        #myfoot{
+            border-top: 1px darkgray solid;
+            font-size:14px;
+            text-align:center;
+            color:lightgray;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 18px;
+        }
+        #webName{
+            color:rgb(181, 81, 201);
+        }
+        #flowerpotImage{
+          width:800px;
+          height:500px;
+          display:flex;
+          align-items:center;
+          margin-left: 370px;
+        }
+        #remind{
+          color:rgba(201, 131, 25, 0.493);
+          text-align:center;
+        }
+    </style>
+{% endblock %}
+
+{% block navbar %}
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/" id="webName">花盆网</a>
+      </div>
+  
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="/">首页 <span class="sr-only">(current)</span></a></li>
+          <li><a href="/about">关于我</a></li>
+        </ul>
+        <form class="navbar-form navbar-left">
+          <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+          </div>
+          <button type="submit" class="btn btn-default">搜索花盆</button>
+        </form>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/login">登录</a></li>
+          <li><a href="/signup">注册</a></li>
+          <li><a href="/logout">注销</a></li>
+          <li><a href="/bindFlowerpot">绑定花盆</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+{% endblock %}
+
+{% block content %}
+    {%block newcontent %}
+        <h3 id='remind'>欢迎来到智能花盆网站,请登录您的账号.</h3>
+        <h4 id ='remind'>如果没有账号,请点击右上角的注册按钮注册一个新账号.</h4>
+        <img src={{url_for('static', filename='images/flowerpot.jpg')}}  alt="花盆" id='flowerpotImage' />
+    {%endblock %}
+
+    {% block footer %}
+        <p id="myfoot">备案号:皖ICP备2021006413号</p>
+    {% endblock %}
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+{% endblock %}

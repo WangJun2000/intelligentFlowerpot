@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <meta charset="utf-8" />
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='images/favicon.ico') }}"
+  />
+  <script>
+
+    //提交花盆名
+    function registerFlowerpot() {
+      //验证数据
+      if (!myForm.flowerpotName.value) {
+        alert("请输入用户名！");
+        myForm.flowerpotName.focus();
+        return;
+      }
+
+      //提交表单
+      myForm.method = "POST";
+      myForm.action = "registerFlowerpot";
+      myForm.submit();
+    }
+
+    //取消
+    function resetForm() {
+      //重置表单
+      document.getElementsByName("myForm")[0].reset();
+    }
+  </script>
+
+  <head>
+    <title>导入花盆页面</title>
+
+    <style>
+      body {
+        background-color: #d0e4fe;
+      }
+
+      h1 {
+        color: orange;
+        text-align: center;
+      }
+
+      p {
+        font-family: "Times New Roman";
+        font-size: 20px;
+      }
+
+      input[type="text"],
+      input[type="password"],
+      select,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+        margin-top: 6px;
+        margin-bottom: 16px;
+        resize: vertical;
+      }
+
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
+
+      .container {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>导入花盆页面</h3>
+    <div class="container">
+      <form name="myForm">
+
+        <label for="flowerpotName">用户名</label>
+        <input
+          type="text"
+          id="flowerpotName"
+          name="flowerpotName"
+          placeholder="请输入花盆名.."
+        />
+
+
+        <td colspan="2" style="text-align: center; padding: 5px">
+          <input type="button" value="导入" onclick="registerFlowerpot()" />
+          <input type="button" value="取消" onclick="resetForm()" />
+        </td>
+      </form>
+    </div>
+  </body>
+</html>
