@@ -132,7 +132,7 @@
     for (var i = 0; i < timeArr.length; i++) {
       console.log(timeArr[i])
       console.log(soilHumidityArr[i])
-      soilHumidityData.push({ x: moment(timeArr[i]), y: soilHumidityArr[i] })
+      soilHumidityData.push({ x: moment(timeArr[i]), y: soilHumidityArr[i]*100 })
     }
 
     var lightIntensityData = []
@@ -200,7 +200,12 @@
             scaleLabel: {
               display: true,
               labelString: '温度/℃'
-            }
+            },
+            ticks:{
+              min:-10,
+              max:40,
+              stepSize:5
+            },
           }]
         },
       }
@@ -262,7 +267,12 @@
             scaleLabel: {
               display: true,
               labelString: '土壤湿度/%'
-            }
+            },
+            ticks:{
+              min:0,
+              max:100,
+              stepSize:10
+            },
           }]
         },
       }
@@ -323,8 +333,13 @@
           yAxes: [{
             scaleLabel: {
               display: true,
-              labelString: '光强/cd'
-            }
+              labelString: '光强/FC'
+            },
+            ticks:{
+              max:50,
+              min:0,
+              stepSize:10
+            },
           }]
         },
       }

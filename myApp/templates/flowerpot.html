@@ -196,13 +196,13 @@
     </div>
   </div>
 
-  <p class="text-primary" id="testTime">测试时间(每十秒刷新一次):{{latestStatus.testTime}}</p>
+  <p class="text-primary" id="testTime">测试时间(每十秒刷新一次):{{latestStatus.testTime|string|truncate(19,True,'')}}</p>
 
   <div class="box">
     <ul>
       <li>
         <div class="box_ti box_time"> <i>北京 海淀</i>
-          <p id="temperature">{{latestStatus.temperature}}</p>
+          <p id="temperature">{{latestStatus.temperature|round(1,'floor')}}</p>
           <p>℃</p>
           <p></p>
           <p></p>
@@ -210,10 +210,10 @@
           <p></p>
         </div>
         <div class="box_ti box_time2"> <i>北京 海淀</i>
-          <h4 id="soilHumidity">{{latestStatus.soilHumidity|int}}%</h4>
+          <h4 id="soilHumidity">{{latestStatus.soilHumidity|round(3,'floor')*100}}%</h4>
           <strong class="strong1">如果土壤湿度偏低,</strong> <strong>会自动浇水。</strong> </div>
         <div class="box_ti box_time3"> <i>北京 海淀</i>
-          <h4 id ="lightIntensity">{{latestStatus.lightIntensity|int}}cd</h4>
+          <h4 id ="lightIntensity">{{latestStatus.lightIntensity|round(1,'floor')}}FC</h4>
         </div>
       </li>
       <li> </li>
@@ -392,10 +392,10 @@
       console.log('a');
       $.get("{{url_for('user.update')}}",{flowerpotName: '{{currentFlowerpot.flowerpotName}}'},function(data){
         if(data!=null){
-          $('#testTime').text("测试时间(每十秒刷新一次):"+data.testTime);
+          $('#testTime').text("测试时间(每十秒刷新一次):"+data.testTime.substring(0,19));
           $('#temperature').text(data.temperature.toFixed(1));
-          $('#soilHumidity').text(data.soilHumidity.toFixed(2)+"%");
-          $('#lightIntensity').text(data.lightIntensity+"cd");
+          $('#soilHumidity').text(data.soilHumidity.toFixed(3)*100+"%");
+          $('#lightIntensity').text(data.lightIntensity.toFixed(1)+"cd");
           console.log(data)
         }
       })

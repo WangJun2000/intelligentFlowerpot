@@ -2,6 +2,7 @@ import hashlib
 import os,json
 import random
 import threading
+#import paho.mqtt.client as mqtt1
 from datetime import datetime,timedelta
 from flask import (Blueprint, redirect, render_template, request,
                    send_from_directory,url_for,jsonify)
@@ -10,6 +11,7 @@ from sqlalchemy import or_, and_, not_
 from myApp.exts import db,mqtt
 from myApp.user.models import (Flowerpots, FlowerpotsBehaviors, FlowerpotsData,
                                Users)
+                        
 
 user_bp = Blueprint('user', __name__)
 
@@ -284,8 +286,14 @@ def change():
             send["setWater"]=-1
             send["setLED"]=-1
             send["isAuto"]=flowerpot.isAuto
-            mqtt.publish("control"+flowerpotName,payload=json.dumps(send),qos=0)
+            print(flowerpotName)
+            print(send)
+            #mqtt.publish("control"+flowerpotName,payload=json.dumps(send),qos=1)
+            isAutoFile=open("isAuto"+flowerpotName+".txt","w")
+            isAutoFile.write(str(flowerpot.isAuto))
+            isAutoFile.close()
             return ''
+            
 
 #人工控制浇水量
 @user_bp.route('/peoplewater',methods=['GET','POST'])
@@ -309,9 +317,12 @@ def peoplewater():
             data["setLED"]=-1
             data["isAuto"]=False
             #print (threading.currentThread())
-            mqtt.publish("control"+flowerpotName,payload=json.dumps(data),qos=2)
+            #mqtt.publish("control"+flowerpotName,payload=json.dumps(data),qos=2)
             db.session.add(flowerpotBehavior)
             db.session.commit()
+            controlWaterFile=open("controlWater"+flowerpotName+".txt","w")
+            controlWaterFile.write(str(watergrade))
+            controlWaterFile.close()
             return 'success'
 
 #人工设置光强
@@ -335,9 +346,12 @@ def peoplesetLED():
             data["setWater"]=-1
             data["setLED"]=lightIntensity
             data["isAuto"]=False
-            mqtt.publish("control"+flowerpotName,payload=json.dumps(data),qos=2)
+            #mqtt.publish("control"+flowerpotName,payload=json.dumps(data),qos=2)
             db.session.add(flowerpotBehavior)
             db.session.commit()
+            controlLEDFile=open("controlLED"+flowerpotName+".txt","w")
+            controlLEDFile.write(str(lightIntensity))
+            controlLEDFile.close()
             return 'success'
 
 #获取花盆的最新状态
